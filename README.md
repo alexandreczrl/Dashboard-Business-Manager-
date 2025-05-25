@@ -1,2 +1,1519 @@
 # Dashboard-Business-Manager-
 Dashboard Business Manager - JS
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proxima IT - Business Manager Dashboard</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@400;700;900&display=swap');
+        
+        :root {
+            --primary-color: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary-color: #475569;
+            --accent-color: #06b6d4;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --bg-tertiary: #f1f5f9;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-tertiary: #64748b;
+            --border-color: #e2e8f0;
+            --border-light: #f1f5f9;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            font-size: 14px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 1rem 2rem;
+            box-shadow: var(--shadow-lg);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+            opacity: 0.1;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo-placeholder {
+            width: 48px;
+            height: 48px;
+            background: rgba(255, 255, 255, 0.15);
+            border: 2px dashed rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.7);
+            text-align: center;
+            line-height: 1.2;
+        }
+
+        .header h1 {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.75rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header-meta {
+            font-size: 0.875rem;
+            opacity: 0.9;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 0.25rem;
+        }
+
+        .tabs {
+            background: var(--bg-primary);
+            border-bottom: 1px solid var(--border-color);
+            padding: 0 2rem;
+            display: flex;
+            gap: 0;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .tab {
+            padding: 1rem 1.5rem;
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s ease;
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .tab:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .tab.active {
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
+            background: var(--bg-tertiary);
+        }
+
+        .tab.active::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--primary-color);
+        }
+
+        .content {
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .search-section {
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .search-container {
+            position: relative;
+            min-width: 300px;
+            flex: 1;
+            max-width: 400px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 3rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 0.875rem;
+            background: var(--bg-primary);
+            transition: all 0.2s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-tertiary);
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+        }
+
+        .card-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .metric {
+            font-size: 2.25rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin: 0.75rem 0;
+            line-height: 1;
+        }
+
+        .metric-subtitle {
+            font-size: 0.875rem;
+            color: var(--text-tertiary);
+            margin-bottom: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            font-size: 0.875rem;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 0.875rem;
+            background: var(--bg-primary);
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .btn {
+            background: var(--primary-color);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-family: inherit;
+        }
+
+        .btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-secondary {
+            background: var(--secondary-color);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #374151;
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+        }
+
+        .btn-outline:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .table-container {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table th, .table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-light);
+            font-size: 0.875rem;
+        }
+
+        .table th {
+            background: var(--bg-tertiary);
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 0.8125rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .table tbody tr:hover {
+            background: var(--bg-tertiary);
+        }
+
+        .status {
+            padding: 0.375rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-active {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .status-pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-closed {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .actions {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 1000;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-content {
+            background: var(--bg-primary);
+            margin: 3% auto;
+            padding: 2rem;
+            width: 90%;
+            max-width: 600px;
+            border-radius: 16px;
+            position: relative;
+            box-shadow: var(--shadow-xl);
+            border: 1px solid var(--border-color);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .close {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            background: var(--bg-tertiary);
+            color: var(--text-tertiary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+        }
+
+        .close:hover {
+            background: var(--danger-color);
+            color: white;
+        }
+
+        .chart-container {
+            width: 100%;
+            height: 200px;
+            margin-top: 1rem;
+        }
+
+        .simple-chart {
+            display: flex;
+            align-items: end;
+            justify-content: space-around;
+            height: 150px;
+            padding: 1rem 0;
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .bar {
+            background: linear-gradient(to top, var(--primary-color), var(--accent-color));
+            border-radius: 4px 4px 0 0;
+            min-width: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .bar:hover {
+            transform: scale(1.05);
+            box-shadow: var(--shadow-md);
+        }
+
+        .bar-label {
+            position: absolute;
+            bottom: -25px;
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+            white-space: nowrap;
+            font-weight: 500;
+        }
+
+        .bar-value {
+            position: absolute;
+            top: -25px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .pie-chart {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: conic-gradient(
+                var(--primary-color) 0deg 144deg,
+                var(--border-color) 144deg 216deg,
+                var(--accent-color) 216deg 360deg
+            );
+            margin: 1rem auto;
+            position: relative;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .pie-chart::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60px;
+            height: 60px;
+            background: var(--bg-primary);
+            border-radius: 50%;
+            box-shadow: inset var(--shadow-sm);
+        }
+
+        .pie-legend {
+            text-align: center;
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .chatbot-container {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 1000;
+        }
+
+        .chatbot-toggle {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+            border: none;
+            color: white;
+            font-size: 1.25rem;
+            cursor: pointer;
+            box-shadow: var(--shadow-lg);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .chatbot-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .chatbot-window {
+            position: absolute;
+            bottom: 70px;
+            right: 0;
+            width: 380px;
+            height: 500px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            box-shadow: var(--shadow-xl);
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .chatbot-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 1rem;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chatbot-messages {
+            flex: 1;
+            padding: 1rem;
+            overflow-y: auto;
+            background: var(--bg-secondary);
+        }
+
+        .message {
+            margin-bottom: 1rem;
+            padding: 0.75rem 1rem;
+            border-radius: 12px;
+            max-width: 85%;
+            font-size: 0.875rem;
+            line-height: 1.5;
+        }
+
+        .message.user {
+            background: var(--primary-color);
+            color: white;
+            margin-left: auto;
+            border-bottom-right-radius: 4px;
+        }
+
+        .message.bot {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+            border-bottom-left-radius: 4px;
+        }
+
+        .chatbot-input {
+            display: flex;
+            padding: 1rem;
+            background: var(--bg-primary);
+            border-top: 1px solid var(--border-color);
+            gap: 0.5rem;
+        }
+
+        .chatbot-input input {
+            flex: 1;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            outline: none;
+            font-size: 0.875rem;
+        }
+
+        .chatbot-input input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .chatbot-input button {
+            padding: 0.75rem 1rem;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .chatbot-input button:hover {
+            background: var(--primary-dark);
+        }
+
+        @media (max-width: 1024px) {
+            .content {
+                padding: 1.5rem;
+            }
+            
+            .dashboard-grid {
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 1rem;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+            
+            .content {
+                padding: 1rem;
+            }
+            
+            .tabs {
+                padding: 0 1rem;
+                overflow-x: auto;
+            }
+            
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .search-section {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .search-container {
+                min-width: auto;
+                max-width: none;
+            }
+            
+            .chatbot-window {
+                width: calc(100vw - 2rem);
+                right: -12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <div class="logo-section">
+                <div class="logo-placeholder">
+                    LOGO<br>PROXIMA
+                </div>
+                <div>
+                    <h1>🚀 PROXIMA IT</h1>
+                    <div style="font-size: 0.875rem; opacity: 0.9; margin-top: 0.25rem;">
+                        Business Manager Dashboard
+                    </div>
+                </div>
+            </div>
+            <div class="header-meta">
+                <div>📅 Dimanche 25 Mai 2025</div>
+                <div>👤 Business Manager</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="tabs">
+        <button class="tab active" onclick="showTab('dashboard')">
+            📊 <span>Dashboard</span>
+        </button>
+        <button class="tab" onclick="showTab('prospects')">
+            🎯 <span>Prospects</span>
+        </button>
+        <button class="tab" onclick="showTab('candidates')">
+            👥 <span>Candidats</span>
+        </button>
+        <button class="tab" onclick="showTab('projects')">
+            📋 <span>Projets</span>
+        </button>
+        <button class="tab" onclick="showTab('reports')">
+            📈 <span>Rapports</span>
+        </button>
+    </div>
+
+    <div class="content">
+        <!-- Dashboard Tab -->
+        <div id="dashboard" class="tab-content active">
+            <div class="dashboard-grid">
+                <div class="card">
+                    <div class="card-title">Prospects Actifs</div>
+                    <div class="metric" id="activeProspects">15</div>
+                    <div class="metric-subtitle">+4 cette semaine</div>
+                    <div class="chart-container">
+                        <div class="simple-chart">
+                            <div class="bar" style="height: 60px;">
+                                <div class="bar-value">8</div>
+                                <div class="bar-label">S-3</div>
+                            </div>
+                            <div class="bar" style="height: 45px;">
+                                <div class="bar-value">6</div>
+                                <div class="bar-label">S-2</div>
+                            </div>
+                            <div class="bar" style="height: 75px;">
+                                <div class="bar-value">11</div>
+                                <div class="bar-label">S-1</div>
+                            </div>
+                            <div class="bar" style="height: 90px;">
+                                <div class="bar-value">15</div>
+                                <div class="bar-label">Actuel</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-title">Candidats en Cours</div>
+                    <div class="metric" id="activeCandidates">12</div>
+                    <div class="metric-subtitle">3 entretiens prévus</div>
+                    <div class="chart-container">
+                        <div class="pie-chart"></div>
+                        <div class="pie-legend">
+                            <span>🔵 Disponibles (40%)</span>
+                            <span>🟡 En mission (35%)</span>
+                            <span>🟢 En process (25%)</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-title">Projets Actifs</div>
+                    <div class="metric" id="activeProjects">8</div>
+                    <div class="metric-subtitle">2 en négociation</div>
+                    <div class="chart-container">
+                        <div class="simple-chart">
+                            <div class="bar" style="height: 45px;">
+                                <div class="bar-value">3</div>
+                                <div class="bar-label">Prop.</div>
+                            </div>
+                            <div class="bar" style="height: 75px;">
+                                <div class="bar-value">5</div>
+                                <div class="bar-label">En cours</div>
+                            </div>
+                            <div class="bar" style="height: 30px;">
+                                <div class="bar-value">2</div>
+                                <div class="bar-label">Terminés</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-title">CA Prévisionnel</div>
+                    <div class="metric">€58K</div>
+                    <div class="metric-subtitle">Ce trimestre (+15%)</div>
+                    <div class="chart-container">
+                        <div class="simple-chart">
+                            <div class="bar" style="height: 50px;">
+                                <div class="bar-value">32K</div>
+                                <div class="bar-label">Jan</div>
+                            </div>
+                            <div class="bar" style="height: 70px;">
+                                <div class="bar-value">45K</div>
+                                <div class="bar-label">Fév</div>
+                            </div>
+                            <div class="bar" style="height: 90px;">
+                                <div class="bar-value">58K</div>
+                                <div class="bar-label">Mar</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">Activités Récentes</div>
+                <div id="recentActivities">
+                    <p>• 📞 Appel prospect TechCorp - 10:30</p>
+                    <p>• 👥 Entretien candidat DevOps Senior - 14:00</p>
+                    <p>• 📧 Relance projet DataFlow - 16:15</p>
+                    <p>• 💼 Signature contrat CloudMigration - 17:45</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Prospects Tab -->
+        <div id="prospects" class="tab-content">
+            <div class="search-section">
+                <div class="search-container">
+                    <input type="text" class="search-input" id="prospectSearch" placeholder="Rechercher un prospect..." onkeyup="searchTable('prospectsTable', 'prospectSearch')">
+                    <span class="search-icon">🔍</span>
+                </div>
+                <div class="actions">
+                    <button class="btn" onclick="openModal('candidateModal')">
+                        ➕ Nouveau Candidat
+                    </button>
+                    <button class="btn btn-outline">
+                        📊 Exporter
+                    </button>
+                </div>
+            </div>
+            
+            <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Nom</th>
+                            <th>Email</th>
+                            <th>Compétences</th>
+                            <th>Expérience</th>
+                            <th>Statut</th>
+                            <th>Salaire Souhaité</th>
+                            <th>Dernier Contact</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="candidatesTable">
+                        <!-- Data will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Projects Tab -->
+        <div id="projects" class="tab-content">
+            <div class="search-section">
+                <div class="search-container">
+                    <input type="text" class="search-input" id="projectSearch" placeholder="Rechercher un projet..." onkeyup="searchTable('projectsTable', 'projectSearch')">
+                    <span class="search-icon">🔍</span>
+                </div>
+                <div class="actions">
+                    <button class="btn" onclick="openModal('projectModal')">
+                        ➕ Nouveau Projet
+                    </button>
+                    <button class="btn btn-outline">
+                        📊 Exporter
+                    </button>
+                </div>
+            </div>
+            
+            <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Projet</th>
+                            <th>Client</th>
+                            <th>Type</th>
+                            <th>Statut</th>
+                            <th>Budget</th>
+                            <th>Début</th>
+                            <th>Fin Prévue</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="projectsTable">
+                        <!-- Data will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Reports Tab -->
+        <div id="reports" class="tab-content">
+            <div class="dashboard-grid">
+                <div class="card">
+                    <div class="card-title">Conversion Prospects</div>
+                    <div class="metric">28%</div>
+                    <div class="metric-subtitle">Ce mois (+3%)</div>
+                </div>
+                <div class="card">
+                    <div class="card-title">Taux de Placement</div>
+                    <div class="metric">65%</div>
+                    <div class="metric-subtitle">Candidats placés</div>
+                </div>
+                <div class="card">
+                    <div class="card-title">CA Réalisé</div>
+                    <div class="metric">€52K</div>
+                    <div class="metric-subtitle">Ce mois (+12%)</div>
+                </div>
+                <div class="card">
+                    <div class="card-title">Marge Moyenne</div>
+                    <div class="metric">22%</div>
+                    <div class="metric-subtitle">Sur les projets</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div id="prospectModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Nouveau Prospect</h2>
+                <button class="close" onclick="closeModal('prospectModal')">×</button>
+            </div>
+            <form id="prospectForm">
+                <div class="form-group">
+                    <label>Entreprise *</label>
+                    <input type="text" id="companyName" required>
+                </div>
+                <div class="form-group">
+                    <label>Contact *</label>
+                    <input type="text" id="contactName" required>
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="contactEmail">
+                </div>
+                <div class="form-group">
+                    <label>Téléphone</label>
+                    <input type="tel" id="contactPhone">
+                </div>
+                <div class="form-group">
+                    <label>Secteur</label>
+                    <select id="prospectSector">
+                        <option value="">Sélectionner...</option>
+                        <option value="Finance">Finance</option>
+                        <option value="E-commerce">E-commerce</option>
+                        <option value="Santé">Santé</option>
+                        <option value="Industrie">Industrie</option>
+                        <option value="Startup">Startup</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Budget Estimé (€)</label>
+                    <input type="number" id="prospectBudget" placeholder="25000">
+                </div>
+                <div class="form-group">
+                    <label>Notes</label>
+                    <textarea id="prospectNotes" rows="3"></textarea>
+                </div>
+                <div class="actions">
+                    <button type="submit" class="btn">Enregistrer</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('prospectModal')">Annuler</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="candidateModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Nouveau Candidat</h2>
+                <button class="close" onclick="closeModal('candidateModal')">×</button>
+            </div>
+            <form id="candidateForm">
+                <div class="form-group">
+                    <label>Nom Complet *</label>
+                    <input type="text" id="candidateName" required>
+                </div>
+                <div class="form-group">
+                    <label>Email *</label>
+                    <input type="email" id="candidateEmail" required>
+                </div>
+                <div class="form-group">
+                    <label>Téléphone</label>
+                    <input type="tel" id="candidatePhone">
+                </div>
+                <div class="form-group">
+                    <label>Compétences *</label>
+                    <input type="text" id="candidateSkills" placeholder="Ex: React, Node.js, AWS" required>
+                </div>
+                <div class="form-group">
+                    <label>Expérience (années)</label>
+                    <input type="number" id="candidateExperience" min="0">
+                </div>
+                <div class="form-group">
+                    <label>Salaire Souhaité (€)</label>
+                    <input type="number" id="candidateSalary" placeholder="55000">
+                </div>
+                <div class="actions">
+                    <button type="submit" class="btn">Enregistrer</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('candidateModal')">Annuler</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="projectModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Nouveau Projet</h2>
+                <button class="close" onclick="closeModal('projectModal')">×</button>
+            </div>
+            <form id="projectForm">
+                <div class="form-group">
+                    <label>Nom du Projet *</label>
+                    <input type="text" id="projectName" required>
+                </div>
+                <div class="form-group">
+                    <label>Client *</label>
+                    <input type="text" id="projectClient" required>
+                </div>
+                <div class="form-group">
+                    <label>Type de Projet</label>
+                    <select id="projectType">
+                        <option value="">Sélectionner...</option>
+                        <option value="Développement Web">Développement Web</option>
+                        <option value="Migration Cloud">Migration Cloud</option>
+                        <option value="DevOps">DevOps</option>
+                        <option value="Data Analytics">Data Analytics</option>
+                        <option value="Mobile App">Mobile App</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Budget (€)</label>
+                    <input type="number" id="projectBudget" placeholder="25000">
+                </div>
+                <div class="form-group">
+                    <label>Statut</label>
+                    <select id="projectStatus">
+                        <option value="proposition">Proposition</option>
+                        <option value="negociation">Négociation</option>
+                        <option value="actif">En Cours</option>
+                        <option value="termine">Terminé</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Date de Début</label>
+                    <input type="date" id="projectStartDate">
+                </div>
+                <div class="form-group">
+                    <label>Date de Fin Prévue</label>
+                    <input type="date" id="projectEndDate">
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea id="projectDescription" rows="3"></textarea>
+                </div>
+                <div class="actions">
+                    <button type="submit" class="btn">Enregistrer</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('projectModal')">Annuler</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Chatbot -->
+    <div class="chatbot-container">
+        <button class="chatbot-toggle" onclick="toggleChatbot()">💬</button>
+        <div class="chatbot-window" id="chatbotWindow">
+            <div class="chatbot-header">
+                <span>🤖 Assistant Proxima IT</span>
+                <button class="close" onclick="toggleChatbot()" style="background: rgba(255,255,255,0.2); color: white;">×</button>
+            </div>
+            <div class="chatbot-messages" id="chatbotMessages">
+                <div class="message bot">
+                    Bonjour ! Je suis votre assistant Proxima IT. Posez-moi vos questions sur l'application, vos données ou le métier de business manager IT ! 🚀
+                </div>
+            </div>
+            <div class="chatbot-input">
+                <input type="text" id="chatbotInput" placeholder="Tapez votre question..." onkeypress="handleChatKeyPress(event)">
+                <button onclick="sendChatMessage()">Envoyer</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Enhanced data storage with more examples
+        let data = {
+            prospects: [
+                {id: 1, company: 'TechCorp Solutions', contact: 'Marie Dubois', email: 'marie.dubois@techcorp.com', sector: 'Finance', status: 'Actif', lastAction: 'Appel - 25/05', budget: 45000},
+                {id: 2, company: 'DataFlow Systems', contact: 'Jean Martin', email: 'j.martin@dataflow.com', sector: 'E-commerce', status: 'En Attente', lastAction: 'Email - 23/05', budget: 32000},
+                {id: 3, company: 'InnovateTech', contact: 'Sarah Johnson', email: 'sarah@innovatetech.fr', sector: 'Startup', status: 'Négociation', lastAction: 'Présentation - 24/05', budget: 28000},
+                {id: 4, company: 'HealthSoft', contact: 'Dr. Pierre Leblanc', email: 'p.leblanc@healthsoft.fr', sector: 'Santé', status: 'Proposition Envoyée', lastAction: 'Devis - 22/05', budget: 65000},
+                {id: 5, company: 'AutoIndustrie', contact: 'Marc Rousseau', email: 'marc.r@autoindustrie.com', sector: 'Industrie', status: 'Actif', lastAction: 'Visite - 21/05', budget: 85000},
+                {id: 6, company: 'CloudFirst', contact: 'Lisa Chen', email: 'lisa@cloudfirst.io', sector: 'Finance', status: 'Nouveau', lastAction: 'Contact initial - 25/05', budget: 55000},
+                {id: 7, company: 'RetailMax', contact: 'Thomas Durand', email: 'thomas@retailmax.fr', sector: 'E-commerce', status: 'En Attente', lastAction: 'Rappel - 20/05', budget: 38000}
+            ],
+            candidates: [
+                {id: 1, name: 'Alexandre Petit', email: 'alex.petit@email.com', skills: 'DevOps, AWS, Kubernetes', experience: 5, status: 'Disponible', salary: 65000, lastContact: '24/05/2025'},
+                {id: 2, name: 'Sophie Laurent', email: 'sophie.laurent@email.com', skills: 'React, Node.js, MongoDB', experience: 3, status: 'En Mission', salary: 52000, lastContact: '20/05/2025'},
+                {id: 3, name: 'David Chen', email: 'david.chen@email.com', skills: 'Python, Django, PostgreSQL', experience: 4, status: 'Disponible', salary: 58000, lastContact: '25/05/2025'},
+                {id: 4, name: 'Emma Rodriguez', email: 'emma.rodriguez@email.com', skills: 'Vue.js, TypeScript, Docker', experience: 2, status: 'En Processus', salary: 48000, lastContact: '23/05/2025'},
+                {id: 5, name: 'Lucas Moreau', email: 'lucas.moreau@email.com', skills: 'Java, Spring Boot, Microservices', experience: 6, status: 'Disponible', salary: 72000, lastContact: '22/05/2025'},
+                {id: 6, name: 'Camille Dubois', email: 'camille.dubois@email.com', skills: 'Angular, .NET, Azure', experience: 4, status: 'En Mission', salary: 62000, lastContact: '21/05/2025'},
+                {id: 7, name: 'Maxime Lefèvre', email: 'maxime.lefevre@email.com', skills: 'Flutter, Dart, Firebase', experience: 3, status: 'Disponible', salary: 55000, lastContact: '24/05/2025'},
+                {id: 8, name: 'Juliette Martin', email: 'juliette.martin@email.com', skills: 'Data Science, Python, ML', experience: 5, status: 'En Processus', salary: 68000, lastContact: '25/05/2025'},
+                {id: 9, name: 'Nicolas Blanc', email: 'nicolas.blanc@email.com', skills: 'Cybersécurité, Ethical Hacking', experience: 7, status: 'Disponible', salary: 78000, lastContact: '20/05/2025'},
+                {id: 10, name: 'Anaïs Girard', email: 'anais.girard@email.com', skills: 'UI/UX Design, Figma, React', experience: 4, status: 'En Mission', salary: 56000, lastContact: '23/05/2025'}
+            ],
+            projects: [
+                {id: 1, name: 'Migration Cloud AWS', client: 'TechCorp Solutions', type: 'Migration Cloud', status: 'En Cours', budget: 45000, startDate: '2025-03-01', endDate: '2025-06-30'},
+                {id: 2, name: 'App Mobile E-commerce', client: 'RetailMax', type: 'Mobile App', status: 'Proposition', budget: 38000, startDate: '2025-06-01', endDate: '2025-09-30'},
+                {id: 3, name: 'Plateforme Analytics', client: 'DataFlow Systems', type: 'Data Analytics', status: 'En Cours', budget: 32000, startDate: '2025-02-15', endDate: '2025-05-31'},
+                {id: 4, name: 'Site Web Corporate', client: 'HealthSoft', type: 'Développement Web', status: 'Négociation', budget: 25000, startDate: '2025-07-01', endDate: '2025-10-15'},
+                {id: 5, name: 'Infrastructure DevOps', client: 'InnovateTech', type: 'DevOps', status: 'En Cours', budget: 28000, startDate: '2025-04-01', endDate: '2025-07-31'},
+                {id: 6, name: 'Système de Gestion', client: 'AutoIndustrie', type: 'Développement Web', status: 'Proposition', budget: 85000, startDate: '2025-08-01', endDate: '2025-12-31'},
+                {id: 7, name: 'API Gateway', client: 'CloudFirst', type: 'DevOps', status: 'En Cours', budget: 42000, startDate: '2025-03-15', endDate: '2025-06-15'},
+                {id: 8, name: 'Dashboard BI', client: 'RetailMax', type: 'Data Analytics', status: 'Terminé', budget: 22000, startDate: '2025-01-01', endDate: '2025-03-31'}
+            ]
+        };
+
+        // Tab management
+        function showTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // Search functionality
+        function searchTable(tableId, searchId) {
+            const searchInput = document.getElementById(searchId);
+            const filter = searchInput.value.toLowerCase();
+            const table = document.getElementById(tableId);
+            const rows = table.getElementsByTagName('tr');
+
+            for (let i = 0; i < rows.length; i++) {
+                const cells = rows[i].getElementsByTagName('td');
+                let found = false;
+                
+                for (let j = 0; j < cells.length; j++) {
+                    if (cells[j].textContent.toLowerCase().includes(filter)) {
+                        found = true;
+                        break;
+                    }
+                }
+                
+                rows[i].style.display = found ? '' : 'none';
+            }
+        }
+
+        // Modal management
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'block';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        // Form handlers
+        document.getElementById('prospectForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const newProspect = {
+                id: data.prospects.length + 1,
+                company: document.getElementById('companyName').value,
+                contact: document.getElementById('contactName').value,
+                email: document.getElementById('contactEmail').value,
+                sector: document.getElementById('prospectSector').value || 'Non spécifié',
+                status: 'Nouveau',
+                lastAction: 'Ajouté - ' + new Date().toLocaleDateString('fr-FR'),
+                budget: parseInt(document.getElementById('prospectBudget').value) || 0
+            };
+            
+            data.prospects.push(newProspect);
+            updateProspectsTable();
+            updateDashboard();
+            closeModal('prospectModal');
+            this.reset();
+        });
+
+        document.getElementById('candidateForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const newCandidate = {
+                id: data.candidates.length + 1,
+                name: document.getElementById('candidateName').value,
+                email: document.getElementById('candidateEmail').value,
+                skills: document.getElementById('candidateSkills').value,
+                experience: parseInt(document.getElementById('candidateExperience').value) || 0,
+                status: 'Nouveau',
+                salary: parseInt(document.getElementById('candidateSalary').value) || 0,
+                lastContact: new Date().toLocaleDateString('fr-FR')
+            };
+            
+            data.candidates.push(newCandidate);
+            updateCandidatesTable();
+            updateDashboard();
+            closeModal('candidateModal');
+            this.reset();
+        });
+
+        document.getElementById('projectForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const newProject = {
+                id: data.projects.length + 1,
+                name: document.getElementById('projectName').value,
+                client: document.getElementById('projectClient').value,
+                type: document.getElementById('projectType').value || 'Non spécifié',
+                budget: parseInt(document.getElementById('projectBudget').value) || 0,
+                status: document.getElementById('projectStatus').value,
+                startDate: document.getElementById('projectStartDate').value,
+                endDate: document.getElementById('projectEndDate').value
+            };
+            
+            data.projects.push(newProject);
+            updateProjectsTable();
+            updateDashboard();
+            closeModal('projectModal');
+            this.reset();
+        });
+
+        // Update functions
+        function updateProspectsTable() {
+            const tbody = document.getElementById('prospectsTable');
+            tbody.innerHTML = '';
+            
+            data.prospects.forEach(prospect => {
+                const statusClass = getStatusClass(prospect.status);
+                tbody.innerHTML += `
+                    <tr>
+                        <td><strong>${prospect.company}</strong></td>
+                        <td>${prospect.contact}</td>
+                        <td>${prospect.email}</td>
+                        <td>${prospect.sector}</td>
+                        <td><span class="status ${statusClass}">${prospect.status}</span></td>
+                        <td>${prospect.lastAction}</td>
+                        <td>€${prospect.budget.toLocaleString()}</td>
+                        <td>
+                            <button class="btn btn-secondary" onclick="editProspect(${prospect.id})">Éditer</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function updateCandidatesTable() {
+            const tbody = document.getElementById('candidatesTable');
+            tbody.innerHTML = '';
+            
+            data.candidates.forEach(candidate => {
+                const statusClass = getStatusClass(candidate.status);
+                tbody.innerHTML += `
+                    <tr>
+                        <td><strong>${candidate.name}</strong></td>
+                        <td>${candidate.email}</td>
+                        <td>${candidate.skills}</td>
+                        <td>${candidate.experience} ans</td>
+                        <td><span class="status ${statusClass}">${candidate.status}</span></td>
+                        <td>€${candidate.salary.toLocaleString()}</td>
+                        <td>${candidate.lastContact}</td>
+                        <td>
+                            <button class="btn btn-secondary" onclick="editCandidate(${candidate.id})">Éditer</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function updateProjectsTable() {
+            const tbody = document.getElementById('projectsTable');
+            tbody.innerHTML = '';
+            
+            data.projects.forEach(project => {
+                const statusClass = getStatusClass(project.status);
+                tbody.innerHTML += `
+                    <tr>
+                        <td><strong>${project.name}</strong></td>
+                        <td>${project.client}</td>
+                        <td>${project.type}</td>
+                        <td><span class="status ${statusClass}">${project.status}</span></td>
+                        <td>€${project.budget.toLocaleString()}</td>
+                        <td>${project.startDate ? new Date(project.startDate).toLocaleDateString('fr-FR') : '-'}</td>
+                        <td>${project.endDate ? new Date(project.endDate).toLocaleDateString('fr-FR') : '-'}</td>
+                        <td>
+                            <button class="btn btn-secondary" onclick="editProject(${project.id})">Éditer</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function updateDashboard() {
+            document.getElementById('activeProspects').textContent = data.prospects.length;
+            document.getElementById('activeCandidates').textContent = data.candidates.length;
+            document.getElementById('activeProjects').textContent = data.projects.length;
+        }
+
+        function getStatusClass(status) {
+            const statusMap = {
+                'Actif': 'status-active',
+                'En Cours': 'status-active',
+                'Disponible': 'status-active',
+                'Nouveau': 'status-active',
+                'Négociation': 'status-active',
+                'En Attente': 'status-pending',
+                'Proposition': 'status-pending',
+                'En Mission': 'status-pending',
+                'En Processus': 'status-pending',
+                'Proposition Envoyée': 'status-pending',
+                'Fermé': 'status-closed',
+                'Terminé': 'status-closed'
+            };
+            return statusMap[status] || 'status-pending';
+        }
+
+        // Edit functions (placeholder)
+        function editProspect(id) {
+            alert('Fonction d\'édition à implémenter pour le prospect ' + id);
+        }
+
+        function editCandidate(id) {
+            alert('Fonction d\'édition à implémenter pour le candidat ' + id);
+        }
+
+        function editProject(id) {
+            alert('Fonction d\'édition à implémenter pour le projet ' + id);
+        }
+
+        // Chatbot functionality
+        function toggleChatbot() {
+            const window = document.getElementById('chatbotWindow');
+            window.style.display = window.style.display === 'flex' ? 'none' : 'flex';
+        }
+
+        function handleChatKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendChatMessage();
+            }
+        }
+
+        function sendChatMessage() {
+            const input = document.getElementById('chatbotInput');
+            const message = input.value.trim();
+            
+            if (!message) return;
+            
+            addChatMessage(message, 'user');
+            input.value = '';
+            
+            setTimeout(() => {
+                const response = generateBotResponse(message);
+                addChatMessage(response, 'bot');
+            }, 500);
+        }
+
+        function addChatMessage(message, sender) {
+            const messagesContainer = document.getElementById('chatbotMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}`;
+            messageDiv.textContent = message;
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function generateBotResponse(userMessage) {
+            const message = userMessage.toLowerCase();
+            
+            if (message.includes('prospect') || message.includes('client')) {
+                return "Pour gérer vos prospects efficacement : utilisez l'onglet Prospects pour suivre vos opportunités commerciales, notez chaque interaction, et classifiez par statut. Vous avez actuellement " + data.prospects.length + " prospects. Le taux de conversion moyen est de 28% dans l'IT.";
+            }
+            
+            if (message.includes('candidat') || message.includes('recrutement') || message.includes('talent')) {
+                return "Pour le recrutement IT : documentez les compétences techniques, évaluez l'expérience, et maintenez un pipeline de talents. Vous avez " + data.candidates.length + " candidats en base. Les profils DevOps et Cloud sont très demandés actuellement. Taux de placement optimal : 65%.";
+            }
+            
+            if (message.includes('projet') || message.includes('budget') || message.includes('ca')) {
+                return "Gestion de projets IT : suivez les budgets, les délais et les jalons. Vous avez " + data.projects.length + " projets en cours. Diversifiez entre Cloud Migration, Dev Mobile, et Data Analytics. Objectif CA trimestriel : 58K€.";
+            }
+            
+            if (message.includes('recherche') || message.includes('search') || message.includes('chercher')) {
+                return "Utilisez les barres de recherche dans chaque onglet pour filtrer rapidement vos données. Tapez le nom d'une entreprise, un nom de candidat, ou des compétences pour trouver ce que vous cherchez instantanément !";
+            }
+            
+            if (message.includes('dashboard') || message.includes('tableau') || message.includes('métrique')) {
+                return "Le dashboard vous montre les KPIs essentiels avec des graphiques interactifs : " + data.prospects.length + " prospects actifs, " + data.candidates.length + " candidats, " + data.projects.length + " projets. Les graphiques montrent les tendances hebdomadaires et la répartition des statuts.";
+            }
+            
+            if (message.includes('proxima') || message.includes('logo')) {
+                return "Proxima IT est votre partenaire technologique. L'espace logo en haut à gauche peut être personnalisé avec le logo de votre entreprise. Cette application est conçue pour optimiser votre activité de Business Manager IT.";
+            }
+            
+            if (message.includes('export') || message.includes('rapport')) {
+                return "Les boutons 'Exporter' dans chaque onglet vous permettront de générer des rapports Excel ou PDF (fonctionnalité à implémenter). Consultez l'onglet Rapports pour vos métriques de performance.";
+            }
+            
+            if (message.includes('bonjour') || message.includes('salut') || message.includes('hello')) {
+                return "Bonjour ! Bienvenue sur Proxima IT Dashboard. Comment puis-je vous aider aujourd'hui avec votre activité de Business Manager IT ? 😊";
+            }
+            
+            return "Excellente question ! En tant que Business Manager IT chez Proxima, vous pouvez me poser des questions sur : la gestion de prospects (" + data.prospects.length + " actuellement), le recrutement tech (" + data.candidates.length + " candidats), les projets IT (" + data.projects.length + " projets), les KPIs, les tendances du marché, ou l'utilisation de cette application. Que souhaitez-vous savoir ?";
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none';
+            }
+        }
+
+        // Initialize application
+        function initializeApp() {
+            updateProspectsTable();
+            updateCandidatesTable();
+            updateProjectsTable();
+            updateDashboard();
+        }
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', initializeApp);
+    </script>
+</body>
+</html>="search-icon">🔍</span>
+                </div>
+                <div class="actions">
+                    <button class="btn" onclick="openModal('prospectModal')">
+                        ➕ Nouveau Prospect
+                    </button>
+                    <button class="btn btn-outline">
+                        📊 Exporter
+                    </button>
+                </div>
+            </div>
+            
+            <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Entreprise</th>
+                            <th>Contact</th>
+                            <th>Email</th>
+                            <th>Secteur</th>
+                            <th>Statut</th>
+                            <th>Dernière Action</th>
+                            <th>Budget Estimé</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="prospectsTable">
+                        <!-- Data will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Candidates Tab -->
+        <div id="candidates" class="tab-content">
+            <div class="search-section">
+                <div class="search-container">
+                    <input type="text" class="search-input" id="candidateSearch" placeholder="Rechercher un candidat..." onkeyup="searchTable('candidatesTable', 'candidateSearch')">
+                    <span class
